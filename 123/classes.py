@@ -2,14 +2,12 @@ from config import *
 
 
 class Uslugi:
-    uslugi = {'Провести рекламную компанию': 15000,
-              'Определение прибыльных маркетинговых целей': 5000,
-              'Маркетинговая стратегия для вашей компании': 50000,
-              'Создание и продвижение товара': 30000,
-              'План распределения бюджета компании': 25000,
+    uslugi = {1: ['Провести рекламную компанию', 15000],
+              2: ['Определение прибыльных маркетинговых целей', 5000],
+              3: ['Маркетинговая стратегия для вашей компании', 50000],
+              4: ['Создание и продвижение товара', 30000],
+              5: ['План распределения бюджета компании', 25000],
               }
-    # объявить здесь конструктор принимает имя компании и при этом наследуется вниз
-    # еще может что-то добавить сюда
 
     @staticmethod
     def info():
@@ -21,25 +19,34 @@ class Uslugi:
 
 
 class Zakazu(Uslugi):
-    def __init__(self, name):
-        self.name = name  # услуга передается через наследование сюда
+    def __new__(cls, *args, **kwargs):
+        print('Введите имя компании : ')
+        return super().__new__(cls)
 
-    def add_zakaz(self,cos, com):
+    @classmethod
+    def add_zakaz(cls):
         mycursor = mydb.cursor()
-        usl = self.name
-        cos = int(cos)
+        com = input('Наименование компании')
+        for k, v in cls.uslugi.items():
+            print(k, v[0], sep=' : ', end='\n')
+
+        n = int(input('Выберите услугу : '))
+        usl = cls.uslugi[n][0]
+        cos = cls.uslugi[n][1]
+
         mycursor.execute(f"insert into zakazu (usluga, cost, company)"
                          f" values ('{usl}', {cos}, '{com}')")
         mydb.commit()
-        self.info()
+        cls.info()
 
-    def remove_zakaz(self, idz):
+    @classmethod
+    def remove_zakaz(cls):
         mycursor = mydb.cursor()
-        idz = int(idz)
+        print(mycursor.execute('select * from zakazu'))
         mycursor.execute("delete from zakazu where idzakazu = idz")
         mydb.commit()
-        self.del_info()
+        cls.del_info()
 
 
 s = Zakazu('atefirma')
-s.add_zakaz(15000, 'hi_hitler')
+s.add_zakaz()
