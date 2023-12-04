@@ -22,8 +22,8 @@ USE `666danila` ;
 CREATE TABLE IF NOT EXISTS `666danila`.`zakazu` (
   `idzakazu` INT NOT NULL AUTO_INCREMENT,
   `usluga` VARCHAR(45) NOT NULL,
-  `cost_of_usluga` INT NOT NULL,
-  `company_name` VARCHAR(45) NOT NULL,
+  `cost` INT NOT NULL,
+  `company` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`idzakazu`))
 ENGINE = InnoDB;
 
