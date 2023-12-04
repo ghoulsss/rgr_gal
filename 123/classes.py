@@ -19,14 +19,14 @@ class Uslugi:
 
 
 class Zakazu(Uslugi):
-    def __new__(cls, *args, **kwargs):
-        print('Введите имя компании : ')
-        return super().__new__(cls)
+    # def __new__(cls, *args, **kwargs):
+    #     print('Введите имя компании : ')
+    #     return super().__new__(cls)
 
     @classmethod
     def add_zakaz(cls):
         mycursor = mydb.cursor()
-        com = input('Наименование компании')
+        com = input('Наименование компании : ')
         for k, v in cls.uslugi.items():
             print(k, v[0], sep=' : ', end='\n')
 
@@ -42,9 +42,17 @@ class Zakazu(Uslugi):
     @classmethod
     def remove_zakaz(cls):
         mycursor = mydb.cursor()
-        print(mycursor.execute('select * from zakazu'))
-        mycursor.execute("delete from zakazu where idzakazu = idz")
-        mydb.commit()
+        mycursor.execute("select * from zakazu")
+        #  mycursor.execute("delete from zakazu where idzakazu = idz")
+        print(mycursor.fetchall())
+        #  mydb.commit()
         cls.del_info()
 
 
+vuvod = [(1, 'Определение прибыльных маркетинговых целей', 5000, 'gogo'),
+         (2, 'Определение прибыльных маркетинговых целей', 5000, 'gogo2'),
+         (3, 'Создание и продвижение товара', 30000, 'gogo3')]
+Zakazu.add_zakaz()
+Zakazu.add_zakaz()
+Zakazu.add_zakaz()
+Zakazu.remove_zakaz()
