@@ -48,5 +48,3 @@ class Zakazu(Uslugi):
         cls.del_info()
 
 
-s = Zakazu('atefirma')
-s.add_zakaz()
