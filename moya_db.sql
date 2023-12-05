@@ -13,7 +13,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema 666danila
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `666danila` DEFAULT CHARACTER SET utf8 ;
+CREATE SCHEMA IF NOT EXISTS `666danila` DEFAULT CHARACTER SET utf8mb3 ;
 USE `666danila` ;
 
 -- -----------------------------------------------------
@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS `666danila`.`zakazu` (
   `usluga` VARCHAR(45) NOT NULL,
   `cost` INT NOT NULL,
   `company` VARCHAR(45) NOT NULL,
+  `status` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`idzakazu`))
 ENGINE = InnoDB;
 
