@@ -49,9 +49,20 @@ class Zakazu(Uslugi):
     def change_status(self):
         pass
 
-    @abstractmethod
-    def show_status(self):
-        pass
+    @classmethod
+    def show_status(cls):
+        mycursor = mydb.cursor()
+        n = int(input('Введите id заказа для информации о статусе доставки : '))
+        cls.check(n)
+        mycursor.execute(f"select idzakazu from zakazu")
+        zakaz = list(list(i)[0] for i in mycursor.fetchall())
+        if n not in zakaz:
+            print("id заказа не существует")
+            exit()
+        mycursor.execute(f"select usluga, status from zakazu where idzakazu like '{n}'")
+        zakaz = mycursor.fetchall()
+        for i in zakaz:
+            print(f"Услуга : {i[0]}, статус заказа : {i[1]}")
 
     @classmethod
     def remove_zakaz(cls):
@@ -108,21 +119,6 @@ class AdminPanel(Zakazu):
         mycursor.execute(f"update zakazu set status = '{status1}' where idzakazu like {n}")
         mydb.commit()
         cls.change_info()
-
-    @classmethod
-    def show_status(cls):
-        mycursor = mydb.cursor()
-        n = int(input('Введите id заказа для информации о статусе доставки : '))
-        cls.check(n)
-        mycursor.execute(f"select idzakazu from zakazu")
-        zakaz = list(list(i)[0] for i in mycursor.fetchall())
-        if n not in zakaz:
-            print("id заказа не существует")
-            exit()
-        mycursor.execute(f"select usluga, status from zakazu where idzakazu like '{n}'")
-        zakaz = mycursor.fetchall()
-        for i in zakaz:
-            print(f"Услуга : {i[0]}, статус заказа : {i[1]}")
 
 
 class Reg:
