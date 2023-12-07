@@ -109,11 +109,12 @@ class AdminPanel(Zakazu):
         zakaz = mycursor.fetchall()
         for i in zakaz:
             print(f"id : {i[0]}, компания : {i[3]}, услуга - {i[1]}, по цене : {i[2]} руб.")
-        n = int(input('Выберите id заказа, статус которого хотите поменять : '))
+        n = input('Выберите id заказа, статус которого хотите поменять : или 0 если хотите выйти')
         cls.check(n)
+        n = int(n)
         if n not in [i[0] for i in zakaz]:
             print("id заказа не существует")
-            pass
+            return cls.change_status()
         status1 = ['в обработке', 'в процессе', 'Выполнен'][
             int(input("1 : В обработке\n2 : В процессе\n3 : Выполнен\n")) - 1]
         mycursor.execute(f"update zakazu set status = '{status1}' where idzakazu like {n}")
