@@ -145,7 +145,7 @@ class Reg:
             Uslugi.log_info()
 
     @staticmethod
-    def log():
+    def log():  # возвращает тру если логин прошел
         mycursor = mydb.cursor()
         mycursor.execute(f"select login from admins")
         logins = list(list(i)[0] for i in mycursor.fetchall())
@@ -163,5 +163,5 @@ class Reg:
             mycursor = mydb.cursor()
             mycursor.execute(f"select * from admins")
             check = mycursor.fetchall()
-            print(check)
-            return True
+            p = check[0][1]
+            return True if passw == p else False
