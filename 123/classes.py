@@ -1,4 +1,5 @@
 from config import *
+from abc import ABC, abstractmethod
 
 
 class Uslugi:
@@ -21,11 +22,12 @@ class Uslugi:
     def change_info():
         print('Статус заказа изменен\n')
 
+    @staticmethod
+    def log_info():
+        print('Вы успешно зарегистрировались\n')
+
 
 class Zakazu(Uslugi):
-    # def __new__(cls, *args, **kwargs):
-    #     return super().__new__(cls)
-
     @classmethod
     def add_zakaz(cls):
         mycursor = mydb.cursor()
@@ -43,23 +45,13 @@ class Zakazu(Uslugi):
         mydb.commit()
         cls.info()
 
-    @classmethod
-    def change_status(cls):
-        mycursor = mydb.cursor()
-        mycursor.execute("select * from zakazu")
-        zakaz = mycursor.fetchall()
-        for i in zakaz:
-            print(f"id : {i[0]}, компания : {i[3]}, услуга - {i[1]}, по цене : {i[2]} руб.")
-        n = int(input('Выберите id заказа, статус которого хотите поменять : '))
-        cls.check(n)
-        if n not in [i[0] for i in zakaz]:
-            print("id заказа не существует")
-            pass
-        status1 = ['в обработке', 'в процессе', 'Выполнен'][
-            int(input("1 : В обработке\n2 : В процессе\n3 : Выполнен\n")) - 1]
-        mycursor.execute(f"update zakazu set status = '{status1}' where idzakazu like {n}")
-        mydb.commit()
-        cls.change_info()
+    @abstractmethod
+    def change_status(self):
+        pass
+
+    @abstractmethod
+    def show_status(self):
+        pass
 
     @classmethod
     def remove_zakaz(cls):
@@ -92,6 +84,32 @@ class Zakazu(Uslugi):
             print(f"id : {i[0]}, компания : {i[3]}, услуга - {i[1]}, по цене : {i[2]} руб., статус заказа : {i[4]}")
 
     @classmethod
+    def check(cls, obj):
+        if obj == '':
+            print('пустое поле')
+            exit()
+
+
+class AdminPanel(Zakazu):
+    @classmethod
+    def change_status(cls):
+        mycursor = mydb.cursor()
+        mycursor.execute("select * from zakazu")
+        zakaz = mycursor.fetchall()
+        for i in zakaz:
+            print(f"id : {i[0]}, компания : {i[3]}, услуга - {i[1]}, по цене : {i[2]} руб.")
+        n = int(input('Выберите id заказа, статус которого хотите поменять : '))
+        cls.check(n)
+        if n not in [i[0] for i in zakaz]:
+            print("id заказа не существует")
+            pass
+        status1 = ['в обработке', 'в процессе', 'Выполнен'][
+            int(input("1 : В обработке\n2 : В процессе\n3 : Выполнен\n")) - 1]
+        mycursor.execute(f"update zakazu set status = '{status1}' where idzakazu like {n}")
+        mydb.commit()
+        cls.change_info()
+
+    @classmethod
     def show_status(cls):
         mycursor = mydb.cursor()
         n = int(input('Введите id заказа для информации о статусе доставки : '))
@@ -106,16 +124,44 @@ class Zakazu(Uslugi):
         for i in zakaz:
             print(f"Услуга : {i[0]}, статус заказа : {i[1]}")
 
-    @classmethod
-    def check(cls, obj):
-        if obj == '':
-            print('пустое поле')
+
+class Reg:
+    @staticmethod  # создать аккаунт для админов(новых)
+    def reg():
+        mycursor = mydb.cursor()
+        mycursor.execute(f"select login from admins")
+        logins = list(list(i)[0] for i in mycursor.fetchall())
+        logi = input('Введите логин : ')
+        if logi in logins:
+            print("логин уже существует")
             exit()
+        passw = input('Введите пароль : ')
+        Zakazu.check(logi)
+        # Zakazu.check(passw) проверка на пустой пароль
+        if logi not in logins:
+            mycursor = mydb.cursor()
+            mycursor.execute(f"insert into admins (login, password) values ('{logi}', '{passw}')")
+            mydb.commit()
+            Uslugi.log_info()
 
-
-s = Zakazu()
-# s.add_zakaz()
-# s.change_status()
-# s.remove_zakaz()
-s.show_status()
-# s.show_all()
+    @staticmethod
+    def log():
+        mycursor = mydb.cursor()
+        mycursor.execute(f"select login from admins")
+        logins = list(list(i)[0] for i in mycursor.fetchall())
+        logi = input('Введите логин : ')
+        if logi not in logins:
+            print("логин не найден")
+            exit()
+        passw = input('Введите пароль : ')
+        Zakazu.check(logi)
+        # Zakazu.check(passw) проверка на пустой пароль
+        mycursor = mydb.cursor()
+        mycursor.execute(f"select login from admins")
+        logins = list(list(i)[0] for i in mycursor.fetchall())
+        if logi in logins:
+            mycursor = mydb.cursor()
+            mycursor.execute(f"select * from admins")
+            check = mycursor.fetchall()
+            print(check)
+            return True
