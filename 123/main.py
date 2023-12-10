@@ -50,7 +50,8 @@ if __name__ == '__main__':
                 choice = input(f'Меню : \n{"".join(menu)}')
                 match choice:
                     case '1':
-                        Zakazu.show_all()
+                        for k, v in Uslugi.uslugi.items():
+                            print(v[0], f'{v[1]} руб.', sep=' : ', end='\n')
                         contr()
                     case '2':
                         Zakazu.add_zakaz()
