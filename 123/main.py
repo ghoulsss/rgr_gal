@@ -12,7 +12,8 @@ def contr():
         choice_outer = input(f'Меню : \n{"".join(menu)}')
         match choice_outer:
             case '1':
-                Zakazu.show_all()
+                for k, v in Uslugi.uslugi.items():
+                    print(v[0], f'{v[1]} руб.', sep=' : ', end='\n')
             case '2':
                 Zakazu.add_zakaz()
             case '3':
