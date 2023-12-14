@@ -71,7 +71,7 @@ if __name__ == '__main__':
                 match lo:
                     case '1':
                         if Reg.log():
-                            AdminPanel.change_status()
+                            ###
                             adm_contr()
                         print('Неверный пароль')
                         adm_contr()

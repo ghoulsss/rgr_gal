@@ -2,7 +2,20 @@ from config import *
 from abc import ABC, abstractmethod
 
 
-class Uslugi:
+class Nazvanie(ABC):
+    uslugi = {1: ['Проведение рекламной компании', 15000],
+              2: ['Определение прибыльных маркетинговых целей', 5000],
+              3: ['Маркетинговая стратегия для вашей компании', 50000],
+              4: ['Создание и продвижение товара', 30000],
+              5: ['План распределения бюджета компании', 25000],
+              }
+
+    @abstractmethod
+    def change_status(self):
+        pass
+
+
+class Company:
     uslugi = {1: ['Проведение рекламной компании', 15000],
               2: ['Определение прибыльных маркетинговых целей', 5000],
               3: ['Маркетинговая стратегия для вашей компании', 50000],
@@ -26,8 +39,50 @@ class Uslugi:
     def log_info():
         print('Вы успешно зарегистрировались\n')
 
+    class User:
+        def __init__(self, log, password):  # создать аккаунт
+            self.log = log
+            self.password = password
 
-class Zakazu(Uslugi):
+        def reg(self):
+            mycursor = mydb.cursor()
+            mycursor.execute(f"select login from admins")
+            logins = list(list(i)[0] for i in mycursor.fetchall())
+            if self.log in logins:
+                print("логин уже существует")
+                exit()
+            passw = input('Введите пароль : ')
+            Zakazu.check(self.log)
+            # Zakazu.check(passw) проверка на пустой пароль
+            if self.log not in logins:
+                mycursor = mydb.cursor()
+                mycursor.execute(f"insert into admins (login, password) values ('{self.log}', '{self.password}')")
+                mydb.commit()
+                Company.log_info()
+
+        def log(self):  # возвращает тру если логин прошел
+            mycursor = mydb.cursor()
+            mycursor.execute(f"select login from admins")
+            logins = list(list(i)[0] for i in mycursor.fetchall())
+            logi = input('Введите логин : ')
+            if logi not in logins:
+                print("логин не найден")
+                exit()
+            passw = input('Введите пароль : ')
+            Zakazu.check(logi)
+            # Zakazu.check(passw) проверка на пустой пароль
+            mycursor = mydb.cursor()
+            mycursor.execute(f"select login from admins")
+            logins = list(list(i)[0] for i in mycursor.fetchall())
+            if logi in logins:
+                mycursor = mydb.cursor()
+                mycursor.execute(f"select * from admins")
+                check = mycursor.fetchall()
+                p = check[0][1]
+                return True if passw == p else False
+
+
+class Zakazu(Company):
     @classmethod
     def add_zakaz(cls):
         mycursor = mydb.cursor()
@@ -100,8 +155,6 @@ class Zakazu(Uslugi):
             print('пустое поле')
             exit()
 
-
-class AdminPanel(Zakazu):
     @classmethod
     def change_status(cls):
         mycursor = mydb.cursor()
@@ -122,43 +175,4 @@ class AdminPanel(Zakazu):
         cls.change_info()
 
 
-class Reg:
-    @staticmethod  # создать аккаунт для админов(новых)
-    def reg():
-        mycursor = mydb.cursor()
-        mycursor.execute(f"select login from admins")
-        logins = list(list(i)[0] for i in mycursor.fetchall())
-        logi = input('Введите логин : ')
-        if logi in logins:
-            print("логин уже существует")
-            exit()
-        passw = input('Введите пароль : ')
-        Zakazu.check(logi)
-        # Zakazu.check(passw) проверка на пустой пароль
-        if logi not in logins:
-            mycursor = mydb.cursor()
-            mycursor.execute(f"insert into admins (login, password) values ('{logi}', '{passw}')")
-            mydb.commit()
-            Uslugi.log_info()
 
-    @staticmethod
-    def log():  # возвращает тру если логин прошел
-        mycursor = mydb.cursor()
-        mycursor.execute(f"select login from admins")
-        logins = list(list(i)[0] for i in mycursor.fetchall())
-        logi = input('Введите логин : ')
-        if logi not in logins:
-            print("логин не найден")
-            exit()
-        passw = input('Введите пароль : ')
-        Zakazu.check(logi)
-        # Zakazu.check(passw) проверка на пустой пароль
-        mycursor = mydb.cursor()
-        mycursor.execute(f"select login from admins")
-        logins = list(list(i)[0] for i in mycursor.fetchall())
-        if logi in logins:
-            mycursor = mydb.cursor()
-            mycursor.execute(f"select * from admins")
-            check = mycursor.fetchall()
-            p = check[0][1]
-            return True if passw == p else False
