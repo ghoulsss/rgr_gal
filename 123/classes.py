@@ -3,15 +3,24 @@ from abc import ABC, abstractmethod
 
 
 class Nazvanie(ABC):
-    uslugi = {1: ['Проведение рекламной компании', 15000],
-              2: ['Определение прибыльных маркетинговых целей', 5000],
-              3: ['Маркетинговая стратегия для вашей компании', 50000],
-              4: ['Создание и продвижение товара', 30000],
-              5: ['План распределения бюджета компании', 25000],
-              }
-
     @abstractmethod
     def change_status(self):
+        pass
+
+    @abstractmethod
+    def info(self):
+        pass
+
+    @abstractmethod
+    def del_info(self):
+        pass
+
+    @abstractmethod
+    def change_info(self):
+        pass
+
+    @abstractmethod
+    def log_info(self):
         pass
 
 
@@ -99,10 +108,6 @@ class Zakazu(Company):
                          f" values ('{usl}', {cos}, '{com}', 'в обработке')")
         mydb.commit()
         cls.info()
-
-    @abstractmethod
-    def change_status(self):
-        pass
 
     @classmethod
     def show_status(cls):
