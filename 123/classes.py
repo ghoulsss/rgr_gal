@@ -50,45 +50,33 @@ class Company:
 
     class User:
         def __init__(self, log, password):  # создать аккаунт
-            self.log = log
+            self.login = log
             self.password = password
 
         def reg(self):
             mycursor = mydb.cursor()
             mycursor.execute(f"select login from admins")
             logins = list(list(i)[0] for i in mycursor.fetchall())
-            if self.log in logins:
+            if self.login in logins:
                 print("логин уже существует")
-                exit()
-            passw = input('Введите пароль : ')
-            Zakazu.check(self.log)
-            # Zakazu.check(passw) проверка на пустой пароль
-            if self.log not in logins:
+                return False
+            Zakazu.check(self.login)
+            if self.login not in logins:
                 mycursor = mydb.cursor()
-                mycursor.execute(f"insert into admins (login, password) values ('{self.log}', '{self.password}')")
+                mycursor.execute(f"insert into admins (login, password) values ('{self.login}', '{self.password}')")
                 mydb.commit()
                 Company.log_info()
+                return True
 
-        def log(self):  # возвращает тру если логин прошел
+        def log(self):
             mycursor = mydb.cursor()
             mycursor.execute(f"select login from admins")
             logins = list(list(i)[0] for i in mycursor.fetchall())
-            logi = input('Введите логин : ')
-            if logi not in logins:
-                print("логин не найден")
-                exit()
-            passw = input('Введите пароль : ')
-            Zakazu.check(logi)
-            # Zakazu.check(passw) проверка на пустой пароль
-            mycursor = mydb.cursor()
-            mycursor.execute(f"select login from admins")
-            logins = list(list(i)[0] for i in mycursor.fetchall())
-            if logi in logins:
-                mycursor = mydb.cursor()
+            Zakazu.check(self.login)
+            if self.login in logins:
                 mycursor.execute(f"select * from admins")
-                check = mycursor.fetchall()
-                p = check[0][1]
-                return True if passw == p else False
+                p = mycursor.fetchall()[0][1]
+                return True if self.password == p else False
 
 
 class Zakazu(Company):
@@ -131,9 +119,6 @@ class Zakazu(Company):
         cls.check(n)
         mycursor.execute("select company from zakazu")
         zakaz = mycursor.fetchall()
-        if n not in zakaz:
-            print('Компания не найдена')
-            pass
         mycursor.execute(f"select * from zakazu where company like '{n}'")
         zakaz = mycursor.fetchall()
         for i in zakaz:
